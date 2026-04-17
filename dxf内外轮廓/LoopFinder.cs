@@ -1,4 +1,4 @@
-﻿using netDxf;
+using netDxf;
 using netDxf.Entities;
 using System;
 using System.Collections.Generic;
@@ -6,14 +6,17 @@ using System.Text;
 
 namespace dxf内外轮廓
 {
-    internal class 所有环
+    /// <summary>
+    /// Identifies closed loops from an unstructured list of curves using a winged-edge topology.
+    /// </summary>
+    internal class LoopFinder
     {
-        public List<Curve> curs = new List<Curve>();
-        public List<List<Curve>> loops = new List<List<Curve>>();
-        public 所有环(List<Curve> curs)
+        public List<Curve> Curves = new List<Curve>();
+        public List<List<Curve>> Loops = new List<List<Curve>>();
+        public LoopFinder(List<Curve> Curves)
         {
-            this.curs = curs;
-            int n = curs.Count;
+            this.Curves = Curves;
+            int n = Curves.Count;
 
             // 1. 端点聚类为顶点
             var vertices = new List<Vector3>();
@@ -21,8 +24,8 @@ namespace dxf内外轮廓
             var vEnd = new int[n];
             for (int i = 0; i < n; i++)
             {
-                vStart[i] = FindOrAddVertex(vertices, curs[i].StartPoint, 静态.Tolerance);
-                vEnd[i] = FindOrAddVertex(vertices, curs[i].EndPoint, 静态.Tolerance);
+                vStart[i] = FindOrAddVertex(vertices, Curves[i].StartPoint, Settings.Tolerance);
+                vEnd[i] = FindOrAddVertex(vertices, Curves[i].EndPoint, Settings.Tolerance);
             }
 
             // 2. 创建半边 (2*i=正向, 2*i+1=反向)
@@ -54,7 +57,7 @@ namespace dxf内外轮廓
             {
                 if (!heValid[h]) continue;
                 var V = vertices[heFrom[h]];
-                var c = curs[h / 2];
+                var c = Curves[h / 2];
                 bool forward = (h % 2 == 0);
 
                 if (Math.Abs(c.Bulge) > 1e-10)
@@ -131,25 +134,25 @@ namespace dxf内外轮廓
                 if (!heValid[start] || !hasNext[start] || used[start]) continue;
 
                 var faceCurves = new List<Curve>();
-                var facePoints = new List<Vector3>();
+                
                 int h = start;
                 bool ok = true;
                 do
                 {
                     if (used[h]) { ok = false; break; }
                     used[h] = true;
-                    var src = curs[h / 2];
+                    var src = Curves[h / 2];
                     var clone = src.CloneWithEndpoints(
                         vertices[heFrom[h]], vertices[heTo[h]]);
                     faceCurves.Add(clone);
-                    facePoints.Add(vertices[heFrom[h]]);
+                    
                     h = heNext[h];
                     if (faceCurves.Count > heCount) { ok = false; break; }
                 } while (h != start);
 
                 if (!ok || faceCurves.Count < 2) continue;
 
-                // 有符号面积：正=内轮廓(CCW)，负=外轮廓(CW)，过滤外轮廓和退化面
+                // 有符号面积：正=InnerContour(CCW)，负=OuterContour(CW)，过滤外轮廓和退化面
                 // 使用弧线采样点计算更精确的面积
                 double area = 0;
                 var sampledPts = new List<Vector3>();
@@ -162,8 +165,8 @@ namespace dxf内外轮廓
                     area += p1.X * p2.Y - p2.X * p1.Y;
                 }
                 area /= 2.0;
-                // 过滤退化面（面积接近零），保留正面积（内轮廓）和负面积（外轮廓/孔）
-                if (Math.Abs(area) > 0.1) loops.Add(faceCurves);
+                // 过滤退化面（面积接近零），保留正面积（InnerContour）和负面积（OuterContour/孔）
+                if (Math.Abs(area) > 0.1) Loops.Add(faceCurves);
             }
         }
 

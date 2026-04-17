@@ -1,4 +1,4 @@
-﻿using netDxf;
+using netDxf;
 using netDxf.Entities;
 using System;
 using System.Collections.Generic;
@@ -6,14 +6,17 @@ using System.Text;
 
 namespace dxf内外轮廓
 {
-    internal class 对象转换
+    /// <summary>
+    /// Converts generic DXF entity objects (such as Polylines, Arcs, Splines) into abstract Curves.
+    /// </summary>
+    internal class EntityConverter
     {
-        public List<Curve> curs = new List<Curve>();
-        public 对象转换(IEnumerable<EntityObject> ents)
+        public List<Curve> Curves = new List<Curve>();
+        public EntityConverter(IEnumerable<EntityObject> ents)
         {
             foreach (var e in ents)
             {
-                curs.AddRange(CreateCurves(e));
+                Curves.AddRange(CreateCurves(e));
             }
         }
         List<Curve> CreateCurves(EntityObject dxf)

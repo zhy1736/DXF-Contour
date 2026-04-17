@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using netDxf;
 using netDxf.Entities;
@@ -34,7 +34,7 @@ namespace dxf内外轮廓
             return curves;
         }
 
-        public static void Write(string filePath, string sourceFile, Polyline2D 内轮廓, Polyline2D 外轮廓)
+        public static void Write(string filePath, string sourceFile, Polyline2D? InnerContour, Polyline2D? OuterContour)
         {
             var dxf = DxfDocument.Load(sourceFile);
             if (dxf == null) dxf = new DxfDocument();
@@ -48,16 +48,16 @@ namespace dxf内外轮廓
             foreach (var e in dxf.Entities.Polylines3D) e.Color = AciColor.Default;
             foreach (var e in dxf.Entities.Splines) e.Color = AciColor.Default;
 
-            // 添加轮廓：正面积（外轮廓）黄色，负面积（内孔）红色
-            if (内轮廓 != null)
+            // 添加轮廓：正面积（OuterContour）黄色，负面积（内孔）红色
+            if (InnerContour != null)
             {
-                内轮廓.Color = AciColor.Yellow;
-                dxf.Entities.Add(内轮廓);
+                InnerContour.Color = AciColor.Yellow;
+                dxf.Entities.Add(InnerContour);
             }
-            if (外轮廓 != null)
+            if (OuterContour != null)
             {
-                外轮廓.Color = AciColor.Red;
-                dxf.Entities.Add(外轮廓);
+                OuterContour.Color = AciColor.Red;
+                dxf.Entities.Add(OuterContour);
             }
             dxf.Save(filePath);
         }

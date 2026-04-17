@@ -21,16 +21,16 @@ public partial class Form1 : Form
             string name = System.IO.Path.GetFileName(file);
             richTextBox1.Text += $"读取文件: {name}" + Environment.NewLine;
 
-            var curs = DXFIO.Read(file);
-            Ext ext = new Ext(curs);
+            var Curves = DXFIO.Read(file);
+            ContourResult ext = new ContourResult(Curves);
             string outPath = System.IO.Path.Combine(outDir, name);
-            DXFIO.Write(outPath, file, ext.内轮廓, ext.外轮廓);
+            DXFIO.Write(outPath, file, ext.InnerContour, ext.OuterContour);
 
-            richTextBox1.Text += $" " + ext.str + Environment.NewLine;
+            richTextBox1.Text += $" " + ext.AreaDescriptions + Environment.NewLine;
 
-            richTextBox1.Text += $"读取到曲线: {ext.数据对象数量};" +
-                $"修正后的曲线数量: {ext.处理之后的曲线数量};" +
-                $"计算出{ext.找到的环数量} 个环;" +
+            richTextBox1.Text += $"读取到曲线: {ext.OriginalEntityCount};" +
+                $"修正后的曲线数量: {ext.ProcessedCurveCount};" +
+                $"计算出{ext.DetectedLoopCount} 个环;" +
                 $"生成轮廓成功!" + Environment.NewLine;
         }
         richTextBox1.Text += $"完成，共处理 {files.Length} 个文件" + Environment.NewLine;

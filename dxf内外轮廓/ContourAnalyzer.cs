@@ -1,4 +1,4 @@
-﻿
+
 using netDxf;
 using netDxf.Entities;
 using System;
@@ -8,15 +8,18 @@ using System.Collections.Generic;
 
 namespace dxf内外轮廓
 {
-    internal class 内外轮廓
+    /// <summary>
+    /// Analyzes the topological loops to identify valid inner and outer contours based on signed area.
+    /// </summary>
+    internal class ContourAnalyzer
     {
-        public Polyline2D 外轮廓 = null;
-        public Polyline2D 内轮廓 = null;
-        public string str = "";
-        public 内外轮廓(List<List<Curve>> loops)
+        public Polyline2D? OuterContour = null;
+        public Polyline2D? InnerContour = null;
+        public string AreaDescriptions = "";
+        public ContourAnalyzer(List<List<Curve>> Loops)
         {
             var all = new List<(Polyline2D polyline, double area)>();
-            foreach (var loop in loops)
+            foreach (var loop in Loops)
             {
                 double area = 计算环面积(loop);
                 var pl = 曲线转Polyline2D(loop);
@@ -24,16 +27,16 @@ namespace dxf内外轮廓
             }
             // 过滤退化环（面积接近零），按绝对面积降序排列
             var sorted = all.Where(p => Math.Abs(p.area) > 0.1).OrderByDescending(p => Math.Abs(p.area)).ToList();
-            str = string.Join(",", sorted.Select(p => p.area.ToString("F2")));
+            AreaDescriptions = string.Join(",", sorted.Select(p => p.area.ToString("F2")));
 
-            if (sorted.Count > 0) 外轮廓 = sorted[0].polyline;
+            if (sorted.Count > 0) OuterContour = sorted[0].polyline;
             // 如果最大正面积与最大负面积绝对值相等，说明是同一个环的正反方向，跳过取下一个
             int nextIdx = 1;
             if (sorted.Count > 1 && Math.Abs(Math.Abs(sorted[0].area) - Math.Abs(sorted[1].area)) < 0.1)
                 nextIdx = 2;
-            if (sorted.Count > nextIdx) 内轮廓 = sorted[nextIdx].polyline;
+            if (sorted.Count > nextIdx) InnerContour = sorted[nextIdx].polyline;
         }
-        Polyline2D 曲线转Polyline2D(List<Curve> ordered)
+        Polyline2D? 曲线转Polyline2D(List<Curve> ordered)
         {
             if (ordered.Count == 0) return null;
             var vertices = new List<Polyline2DVertex>();

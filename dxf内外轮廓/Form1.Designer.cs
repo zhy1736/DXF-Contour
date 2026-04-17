@@ -1,4 +1,4 @@
-﻿namespace dxf内外轮廓;
+namespace dxf内外轮廓;
 
 partial class Form1
 {
