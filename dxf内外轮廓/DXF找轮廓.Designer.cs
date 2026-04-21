@@ -1,6 +1,6 @@
 namespace dxf内外轮廓;
 
-partial class Form1
+partial class DXF找轮廓
 {
     /// <summary>
     ///  Required designer variable.
@@ -28,42 +28,42 @@ partial class Form1
     /// </summary>
     private void InitializeComponent()
     {
-        button1 = new Button();
-        richTextBox1 = new RichTextBox();
+        选择文件按钮 = new Button();
+        输出框 = new RichTextBox();
         SuspendLayout();
         // 
-        // button1
+        // 选择文件按钮
         // 
-        button1.Location = new Point(307, 669);
-        button1.Name = "button1";
-        button1.Size = new Size(481, 48);
-        button1.TabIndex = 0;
-        button1.Text = "button1";
-        button1.UseVisualStyleBackColor = true;
-        button1.Click += button1_Click;
+        选择文件按钮.Location = new Point(307, 669);
+        选择文件按钮.Name = "选择文件按钮";
+        选择文件按钮.Size = new Size(481, 48);
+        选择文件按钮.TabIndex = 0;
+        选择文件按钮.Text = "选择dxf文件";
+        选择文件按钮.UseVisualStyleBackColor = true;
+        选择文件按钮.Click += 选择文件按钮_Click;
         // 
-        // richTextBox1
+        // 输出框
         // 
-        richTextBox1.Location = new Point(12, 12);
-        richTextBox1.Name = "richTextBox1";
-        richTextBox1.Size = new Size(776, 639);
-        richTextBox1.TabIndex = 1;
-        richTextBox1.Text = "";
+        输出框.Location = new Point(12, 12);
+        输出框.Name = "输出框";
+        输出框.Size = new Size(776, 639);
+        输出框.TabIndex = 1;
+        输出框.Text = "";
         // 
-        // Form1
+        // DXF找轮廓
         // 
         AutoScaleDimensions = new SizeF(11F, 24F);
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(800, 729);
-        Controls.Add(richTextBox1);
-        Controls.Add(button1);
-        Name = "Form1";
-        Text = "Form1";
+        Controls.Add(输出框);
+        Controls.Add(选择文件按钮);
+        Name = "DXF找轮廓";
+        Text = "DXF找轮廓";
         ResumeLayout(false);
     }
 
     #endregion
 
-    private Button button1;
-    private RichTextBox richTextBox1;
+    private Button 选择文件按钮;
+    private RichTextBox 输出框;
 }
